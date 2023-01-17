@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+  <title>IT Tickets</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand">First IC Bank</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" th:href="@{/tickets}">Dashboard</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" th:href="@{/tickets/new}">New Ticket</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="row">
+
+    <div class="col-10">
+      <div class="input-group">
+        <input type="text" class="form-control" placeholder="Search Ticket" aria-label="Search Ticket" aria-describedby="basic-addon2">
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary" type="button">Search</button>
+        </div>
+      </div>
+    </div>
+
+    <form th:action="@{/tickets/searched/{query}}" th:object="${ticket}" method="get">
+      <input type="text" name="query"/>
+      <button type="submit">search</button>
+    </form>
+
+    <div class="col-2">
+      <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Sort By
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <a class="dropdown-item" th:href="@{/tickets/open}">Open</a>
+          <a class="dropdown-item" th:href="@{/tickets/pending}">Pending</a>
+          <a class="dropdown-item" th:href="@{/tickets/closed}">Closed</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<table class="table">
+  <thead class="thead-dark">
+  <tr>
+    <th scope="col">Ticket ID</th>
+    <th scope="col">Time</th>
+    <th scope="col">Requester</th>
+    <th scope="col">Department</th>
+    <th scope="col">Brief Description</th>
+    <th scope="col">Status</th>
+    <th scope="col">Action</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="ticketsInDatabase: ${listTickets}">
+    <td th:text="${ticketsInDatabase.id}"></td>
+    <td th:text="${#temporals.format(ticketsInDatabase.requestedTime, 'MM-dd-yyyy HH:mm')}"></td>
+    <td th:text="${ticketsInDatabase.requester}"></td>
+    <td th:text="${ticketsInDatabase.department}"></td>
+    <td th:text="${ticketsInDatabase.briefDescription}"></td>
+    <td th:text="${ticketsInDatabase.status}"></td>
+    <td>
+      <a type="button" class="btn btn-secondary" th:href="@{/tickets/view/{id}(id=${ticketsInDatabase.id})}">View</a>
+      <a type="button" class="btn btn-secondary" th:href="@{/tickets/edit/{id}(id=${ticketsInDatabase.id})}">Edit</a>
+      <a type="button" class="btn btn-secondary" th:href="@{/tickets/delete/{id}(id=${ticketsInDatabase.id})}">Delete</a>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+
+<div th:if="${totalPages > 1}">
+  <div class="row col-sm-10">
+    <div class="col-sm-1">
+      <a th:if="${currentPage != 1}" th:href="@{'/page/' + ${currentPage - 1}}">Previous</a>
+      <span th:unless="${currentPage != 1}">Previous</span>
+    </div>
+    <div class="col-sm-1">
+            <span th:each="i: ${#numbers.sequence(begin, end)}">
+      <a th:if="${currentPage != i}" th:href="@{'/page/' + ${i}}">[[${i}]]</a>
+      <span th:unless="${currentPage != i}">[[${i}]]</span>
+            </span>
+    </div>
+    <div class="col-sm-1">
+      <a th:if="${currentPage < totalPages}" th:href="@{'/page/' + ${currentPage + 1}}">Next</a>
+      <span th:unless="${currentPage < totalPages}">Next</span>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+</body>
+</html>
